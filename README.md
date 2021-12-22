@@ -18,7 +18,7 @@ Basic Auth with hardcoded Username and Password is used for Authorization .
 
 *  `https://localhost:7153/api/rates?parameters`
 
-Where parameters are defined suchs as **startDate**=*value*&**endDate**=*value*&**apiKey**=*value*
+Where parameters are defined such as **startDate**=*value*&**endDate**=*value*&**apiKey**=*value*
 * **startDate**- *yyyy-mm--dd* format
 *  **endDate** - *yyyy-mm--dd* format
 * **apikey** - response from the `/api/token` endpoint needs to be provided here
