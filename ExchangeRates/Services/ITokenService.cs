@@ -2,16 +2,26 @@
 public interface ITokenService
 {
     /// <summary>
-    /// List of active access tokens that should be allowed to make requests
+    /// List of active access tokens that should be allowed to make requests.
     /// </summary>
     IList<string> Tokens { get; }
 
     /// <summary>
-    /// Checks user credentials and generate a random access token
+    /// Generates new token.
     /// </summary>
-    /// <param name="username"></param>
-    /// <param name="password"></param>
+    string GenerateNewToken();
+    
+    /// <summary>
+    /// Checks if provided user credentials are correct.
+    /// </summary>
+    /// <param Username="username"></param>
+    /// <param Password="password"></param>
     /// <returns></returns>
-    string? GenerateToken(string? username, string? password);
-}
+    bool CheckCredentials(string username, string password);
+    
+    /// <summary>
+    /// Checks if any Basic-Auth input was provided.
+    /// </summary>
+    bool IsRequestEmptyOrNull (string? AuthInput);
 
+}

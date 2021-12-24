@@ -1,11 +1,13 @@
-﻿using ExchangeRates.Services;
+﻿using System.Text;
+using ExchangeRates;
 using Microsoft.AspNetCore.Mvc;
-using System.Text;
+using ExchangeRates.Services;
 
-namespace ExchangeRates.Controllers;
+namespace myExchangeRates.Controllers;
 
-[Route("api/[controller]")]
+
 [ApiController]
+[Route("api/[controller]")]
 public class TokenController : ControllerBase
 {
     private readonly ITokenService _tokenService;
@@ -14,24 +16,21 @@ public class TokenController : ControllerBase
     {
         _tokenService = tokenService;
     }
-
-    /// <summary>
-    /// Get a new access token using Basic authorization
-    /// </summary>
-    /// <returns></returns>
+    
+    [HttpGet]
     public IActionResult GetToken()
     {
-        var authorizationHeader = Request.Headers.Authorization.ToString();
-        var splitAuthorizationHeader = authorizationHeader.Split(' ');
-        if (splitAuthorizationHeader.Length < 2)
-            return BadRequest();
+        var authHeader = Request.Headers.Authorization.ToString();
+        if (_tokenService.IsRequestEmptyOrNull(authHeader))
+            return Unauthorized();
+        
+        var authEncoded = authHeader.Split(' ')[1];
+        var authDecoded = Encoding.UTF8.GetString(Convert.FromBase64String(authEncoded));
+        var (name,password) = authDecoded.Split(":");
+        if(_tokenService.CheckCredentials(name, password))
+            return Unauthorized();
 
-        var authorizationHeaderDecoded = Encoding.UTF8.GetString(Convert.FromBase64String(splitAuthorizationHeader[1]));
-        var credentials = authorizationHeaderDecoded.Split(':');
-        if (credentials.Length < 2)
-            return BadRequest();
-
-        var token = _tokenService.GenerateToken(credentials[0], credentials[1]);
-        return token == null ? NotFound() : Ok(token);
+        var token = _tokenService.GenerateNewToken();
+        return Ok(token);
     }
 }
